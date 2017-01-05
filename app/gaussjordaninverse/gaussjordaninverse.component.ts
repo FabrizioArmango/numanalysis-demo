@@ -54,7 +54,6 @@ export class GaussJordanInverseComponent
 
     onClick(matrix: Matrix): void
     {
-      //console.debug("Ciaoo"+matrix[0][0]);
       this.algorithm(matrix);
     }
 

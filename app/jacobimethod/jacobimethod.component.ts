@@ -52,7 +52,6 @@ import { GaussJordanInverseComponent } from 'app/gaussjordaninverse/gaussjordani
       <br>
     `,
   styleUrls: ['src/css/app.css']
-  //Columns:<input [(ngModel)]="columns">
 })
 
 export class JacobiMethodComponent
@@ -66,7 +65,6 @@ export class JacobiMethodComponent
 
     onClick(matrix: Matrix, vector: Matrix): void
     {
-      //console.debug("Ciaoo"+matrix[0][0]);
       this.logTitles = [];
       this.logMatrices = [];
       this.logDescriptions = [];

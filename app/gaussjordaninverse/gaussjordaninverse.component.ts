@@ -4,27 +4,42 @@ import { Matrix } from 'app/matrix/matrix';
   selector: 'gauss-jordan-inverse',
   template:
     `
-      Rows:<input type="number" [(ngModel)]="rows">
-      Columns:<input type="number" [(ngModel)]="columns">
-      <br>
-      <br>
-      <matrix-view [rows]="rows" [columns]="columns" #matrixView [hidden]="!(rows && columns && rows > 0 && columns > 0)"></matrix-view>
-      <div *ngIf="!(rows && columns && rows > 0 && columns > 0)">
-        Type valid # of rows and # of columns
-      </div>
-      <button (click)="onClick(matrixView.matrix)">Calc</button>
+      <div>
+        <div *ngIf="isNotValidMatrixSize()">
+          Type valid # of rows and # of columns
+        </div>
+        <div [class.inline-block]="true">Rows:<br>
+          <input  [class.inputText]="true" type="number" [(ngModel)]="rows">
+        </div>
+        <div [class.inline-block]="true">Columns:<br>
+          <input  [class.inputText]="true" type="number" [(ngModel)]="columns">
+        </div>
 
-      <div *ngFor="let matrix of logMatrices; let i = index" #tempCalcContainer>
         <br>
-        <br>
-        <p>{{getTitleOf(i)}}</p>
-        <matrix-view [rows]="matrix.rows" [columns]="matrix.columns" [matrix]="matrix" [disabled]="true"> </matrix-view>
-        <span>{{getDescOf(i)}}</span>
+        <div
+          [class.centered-child]="true"
+          [class.bold-text]="true"
+          [hidden]="isNotValidMatrixSize()">
+        Matrix:
+            <br>
+
+            <matrix-view [rows]="rows" [columns]="columns" #matrixView></matrix-view>
+        </div>
+      </div>
+
+        <button (click)="onClick(matrixView.matrix)">Calc</button>
+
+        <div *ngFor="let matrix of logMatrices; let i = index" #tempCalcContainer>
+          <br>
+          <br>
+          <p>{{getTitleOf(i)}}</p>
+          <matrix-view [rows]="matrix.rows" [columns]="matrix.columns" [matrix]="matrix" [disabled]="true"> </matrix-view>
+          <span>{{getDescOf(i)}}</span>
       </div>
       <br>
 
-    `
-  //styleUrls: ['src/view/matrix-view/matrixview.css',
+    `,
+  styleUrls: ['src/css/app.css']
   //Columns:<input [(ngModel)]="columns">
 })
 
@@ -37,13 +52,13 @@ export class GaussJordanInverseComponent
     logMatrices: Array;
     logDescriptions: Array;
 
-    onClick(matrix): void
+    onClick(matrix: Matrix): void
     {
       //console.debug("Ciaoo"+matrix[0][0]);
       this.algorithm(matrix);
     }
 
-    algorithm(input: Matrix): void
+    algorithm(input: Matrix): Matrix
 		{
 			// (A|I)
       this.logTitles = [];
@@ -57,15 +72,15 @@ export class GaussJordanInverseComponent
       for (var it = 0; it < input.rows; it++)
 			{
         console.log("it: "+it);
-				if (this.isPivotNotZero(output, it))
+				if (output.isPivotNotZero(it))
 				{
           console.log("computing L_i");
-					L_i = this.gaussJordanLower(output, it);
+					L_i = GaussJordanInverseComponent.GaussJordanLower(output, it);
           this.log("Lower"+it, L_i, "Triangolare inferiore");
 					//trace("L_"+it+": "+L_i);
 					//trace("A^"+it+"|I^"+it+this);
 
-					output = Matrix.CloneFrom(Matrix.multiply(L_i, output));
+					output = Matrix.CloneFrom(Matrix.Multiply(L_i, output));
           this.log("( A"+it+" | I"+it+" )", Matrix.CloneFrom(output), "Iterazione: "+it);
           //this.outputs.push(output);
 				}
@@ -79,14 +94,13 @@ export class GaussJordanInverseComponent
 			for (var i = 0; i < output.rows; i++)
 				output.rowProduct(i, 1/output.getAt(i,i));
       this.log("Output", output, "Dividing by pivots");
+
+      output = output.copyMatrixFrom(0, parseInt(output.columns)/parseInt(2), output.rows, output.columns)
+      this.log("Inverse", output, "Deleting Identity to left");
+      return output;
 		}
 
-    isPivotNotZero(input: Matrix, i: number): bool
-		{
-			return input.getAt(i, i) != 0;
-		}
-
-    gaussJordanLower(input: Matrix, j: number): Matrix
+    static GaussJordanLower(input: Matrix, j: number): Matrix
 		{
 			var lower: Matrix = Matrix.Identity(input.rows);
 
@@ -98,6 +112,11 @@ export class GaussJordanInverseComponent
 				}
 			return lower;
 		}
+
+    isNotValidMatrixSize(): boolean
+    {
+      return !(this.rows && this.columns && this.rows > 0 && this.columns > 0);
+    }
 
     showToView(iteration: number, matrix: Matrix): void
     {
@@ -130,4 +149,33 @@ export class GaussJordanInverseComponent
       this.logMatrices.push(matrix);
       this.logDescriptions.push(description);
     }
+
+    static algorithm(input: Matrix): Matrix
+		{
+			// (A|I)
+      var output: Matrix = Matrix.CloneFrom(Matrix.mergeHorizontally(input, Matrix.Identity(input.rows)));
+
+			var L_i: Matrix;
+			//Iterations:
+      for (var it = 0; it < input.rows; it++)
+			{
+				if (output.isPivotNotZero(it))
+				{
+					L_i = GaussJordanInverseComponent.GaussJordanLower(output, it);
+          output = Matrix.CloneFrom(Matrix.Multiply(L_i, output));
+        }
+        // ADD PIVOT ZERO CASE
+				//else
+					//break Iterations;
+				//trace("A^"+(it+1)+"|I^"+(it+1)+this);
+			}
+
+			// Divide rows by pivots
+			for (var i = 0; i < output.rows; i++)
+				output.rowProduct(i, 1/output.getAt(i,i));
+
+      output = output.copyMatrixFrom(0, parseInt(output.columns)/parseInt(2), output.rows, output.columns)
+
+      return output;
+		}
 }

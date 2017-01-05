@@ -4,9 +4,11 @@ import { Component, Input, OnInit } from '@angular/core';
   selector: 'matrix-cell',
   template:
   `
-    <input type="text" [(ngModel)]="value" [disabled]="disabled">
+  <input [class.inputText]="true" type="text" [(ngModel)]="value" [disabled]="disabled">
   `,
+
   //styleUrls: ['src/view/matrix-view/matrixview.css',
+  styleUrls: ['src/css/app.css']
 })
 
 export class MatrixCellComponent implements OnInit

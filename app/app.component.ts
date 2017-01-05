@@ -1,6 +1,7 @@
-import { Component }        from '@angular/core';
+import { Component, ViewEncapsulation  }        from '@angular/core';
 import { MatrixComponent }  from './matrix/matrix.component';
 import { GaussJordanInverseComponent } from './gaussjordaninverse/gaussjordaninverse.component';
+import { JacobiMethodComponent } from './jacobimethod/jacobimethod.component';
 
 @Component
 (
@@ -8,21 +9,25 @@ import { GaussJordanInverseComponent } from './gaussjordaninverse/gaussjordaninv
         selector: 'numerical-analysis-demo',
         template:
         `
-            <h1>{{title}}</h1>
-            <h2>Algorithms</h2>
-            <ul class="algorithms">
+            <h1><span>{{title}}</span></h1>
+        <div [class.centered-div]="true">
+            <ul [class.centered-child]="true" class="algorithms"> <h2>Algorithms</h2>
                 <li *ngFor="let algorithm of algorithms"
                     [class.selected]="algorithm === selectedAlgorithm"
                     (click)="onSelect(algorithm)">
                     <span class="badge">{{algorithm.id}}</span> {{algorithm.name}}
                 </li>
             </ul>
+        </div>
             <div *ngIf="selectedAlgorithm">
               <h2>{{selectedAlgorithm.name}} Demo</h2>
 
               <div [ngSwitch]="selectedAlgorithm.id">
                 <ng-container *ngSwitchCase="1">
                     <gauss-jordan-inverse></gauss-jordan-inverse>
+                </ng-container>
+                <ng-container *ngSwitchCase="2">
+                    <jacobi-method></jacobi-method>
                 </ng-container>
                 <ng-container *ngSwitchDefault>
                     <label>Nessuna implementazione</label>
@@ -32,14 +37,15 @@ import { GaussJordanInverseComponent } from './gaussjordaninverse/gaussjordaninv
 
         `,
         styleUrls: ['src/css/app.css'],
-        directives: [GaussJordanInverseComponent]
+        directives: [ GaussJordanInverseComponent, JacobiMethodComponent ],
+        encapsulation: ViewEncapsulation.None
     }
 )
 
 export class NAComponent
 {
     title = 'Numerical Analysis';
-    algorithms = [{id: 1, name: 'GaussJordanInverse'}, {id: 2, name: 'DummyAlg'}];
+    algorithms = [{id: 1, name: 'Gauss-Jordan Inverse'}, {id: 2, name: 'Jacobi Method'}];
 
     selectedAlgorithm = {};
 

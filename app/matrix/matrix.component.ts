@@ -5,24 +5,16 @@ import { Matrix } from './matrix';
   selector: 'matrix-view',
   template:
   `
-    <table>
-      <tr *ngFor="let row of createRange(rows); let i = index">
-          <td *ngFor="let column of createRange(columns); let j = index">
+    <table [class.centered-child]="true">
+      <tr  *ngFor="let row of createRange(rows); let i = index">
+          <td  *ngFor="let column of createRange(columns); let j = index">
               <matrix-cell (keyup)="updateMatrixValues(i, j, $event)" [value]="(this.matrix) ? this.matrix.getAt(i,j): ''" [disabled]="disabled"></matrix-cell>
               <br>
           </td>
       </tr>
     </table>
   `,
-  styles:
-  [`
-    table, td
-    {
-      border: 1px solid black;
-    }
-  `]
-
-  //styleUrls: ['src/view/matrix-view/matrixview.css',
+  styleUrls: ['src/css/app.css']
 })
 /*
 <tr *ngFor="let row of rows">

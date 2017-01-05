@@ -5,6 +5,7 @@ import { FormsModule }   from '@angular/forms';
 import { NAComponent }  from './app.component';
 
 import { GaussJordanInverseComponent } from './gaussjordaninverse/gaussjordaninverse.component';
+import { JacobiMethodComponent } from './jacobimethod/jacobimethod.component';
 import {MatrixComponent} from './matrix/matrix.component';
 import {MatrixCellComponent} from './matrix/matrix-cell/matrixcell.component';
 
@@ -14,7 +15,7 @@ import {MatrixCellComponent} from './matrix/matrix-cell/matrixcell.component';
   [
     BrowserModule, FormsModule
   ],
-  declarations: [ NAComponent, GaussJordanInverseComponent, MatrixComponent, MatrixCellComponent ],
+  declarations: [ NAComponent, GaussJordanInverseComponent, JacobiMethodComponent, MatrixComponent, MatrixCellComponent ],
   bootstrap:    [ NAComponent ]
 })
 

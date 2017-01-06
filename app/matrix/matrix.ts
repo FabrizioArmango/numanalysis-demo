@@ -69,10 +69,7 @@ export class Matrix
   }
 
   //  >  Static Methods
-
   //
-
-
   // Clone the matrix passed as argument
   static CloneFrom(input: Matrix): Matrix
 	{

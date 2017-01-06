@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Matrix } from './matrix';
+import { Matrix } from './Matrix';
 
 @Component({
   selector: 'matrix-view',

@@ -1,5 +1,5 @@
 import {Component, NgModule} from '@angular/core';
-import { Matrix } from 'app/matrix/matrix';
+import { Matrix } from 'app/matrix/Matrix';
 import { GaussJordanInverseComponent } from 'app/gaussjordaninverse/gaussjordaninverse.component';
 @Component({
   selector: 'jacobi-method',
@@ -33,15 +33,18 @@ import { GaussJordanInverseComponent } from 'app/gaussjordaninverse/gaussjordani
           </div>
           <br>
 
-          <div [class.centered-child]="true" [hidden]="isNotValidVectorSize()">Vector:
+          <div [class.centered-child]="true" [hidden]="isNotValidVectorSize()">
               <br>
-
+              Constant terms
+              <matrix-view [rows]="rows" [columns]="1" #constantView ></matrix-view>
+              <br>
+              Start Vector
               <matrix-view [rows]="rows" [columns]="1" #vectorView ></matrix-view>
           </div>
           <br>
 
       </div>
-      <button (click)="onClick(matrixView.matrix, vectorView.matrix)">Calc</button>
+      <button (click)="onClick(matrixView.matrix, constantView.matrix, vectorView.matrix)">Calc</button>
       <div *ngFor="let matrix of logMatrices; let i = index" #tempCalcContainer>
         <br>
         <br>
@@ -63,64 +66,79 @@ export class JacobiMethodComponent
     logMatrices: Array;
     logDescriptions: Array;
 
-    onClick(matrix: Matrix, vector: Matrix): void
+    onClick(matrix: Matrix, constantV: Matrix, vectorX: Matrix): void
     {
       this.logTitles = [];
       this.logMatrices = [];
       this.logDescriptions = [];
 
-      this.log("vector", vector, "vector");
-
-      this.algorithm(matrix, vector, 3);
+      this.algorithm(matrix, constantV, vectorX, 3);
     }
 
-    algorithm(inputM: Matrix, inputV: Matrix, iterations: number): void
+    
+    algorithm(inputM: Matrix, inputV: Matrix, inputX: Matrix, iterations: number): void
 		{
 			// (A|I)
-      this.log("inputV", inputV, "inputV");
       /*
       this.logTitles = [];
       this.logMatrices = [];
       this.logDescriptions = [];
       */
+      /*
       var M: Matrix = Matrix.DiagonalMatrixOf(inputM);
       var B: Matrix = Matrix.LowerMatrixOf(inputM);
       var C: Matrix = Matrix.UpperMatrixOf(inputM);
       var N: Matrix = Matrix.SumBetween(B, C);
       var MInv: Matrix = GaussJordanInverseComponent.algorithm(M);
+      */
+      //this.log("MInv", MInv, "Inversa con GaussJordan");
 
-      this.log("MInv", MInv, "Inversa con GaussJordan");
-
-      var Bj: Matrix = Matrix.Multiply(MInv, N);
-      this.log("Bj", Bj, "Jacobi Matrix");
+      var Bj: Matrix = JacobiMethodComponent.GetJacobiMatrix(inputM);
+      this.log("Jacobi Matrix", Bj, "  ");
 
       var dV: Matrix = new Matrix(inputM.columns, 1);
 
-      console.log("prima della creazione del vettore d");
       for (var i: number = 0; i < dV.rows; i++)
       {
-         console.log("\ri: "+i);
+        /*
+          console.log("\ri: "+i);
           console.log("\rv: "+inputV);
           console.log("\rinputM: "+inputM);
           console.log("\rinputV[ "+i+" ]: "+inputV.getAt(i, 0));
+        */
           var value: number = parseFloat(parseFloat(inputV.getAt(i, 0)) / parseFloat(inputM.getAt(i, i)));
           console.log("value: "+value);
           dV.setAt(i, 0, value);
       }
-      this.log("dV", dV, "..");
+      this.log("Vector d", dV, " ");
 
-      var outputV: Matrix = new Matrix(inputM.columns, 1);
+      var outputV: Matrix = Matrix.CloneFrom(inputX);
 
       for (var i: number = 0; i < iterations; i++)
       {
-        console.log("iterazione: "+i);
-          outputV = Matrix.CloneFrom(Matrix.Multiply(Bj, outputV));
-          this.log("Bj*vector", outputV, "iteration");
+          console.log("iterazione: "+i);
+          outputV = Matrix.Multiply(Bj, outputV);
+          outputV = Matrix.CloneFrom(outputV);
           outputV = Matrix.SumBetween(outputV, dV);
-          this.log("Output", outputV, "iteration:"+parseInt(i)+parseInt(1));
+          this.log("x("+i+"):", outputV, "iteration:"+(i+parseInt(1)));
       }
-
 		}
+
+    static GetJacobiMatrix(A: Matrix): Matrix
+    {
+      var J: Matrix = new Matrix(A.rows, A.columns);
+
+      for (var i: number = 0; i < A.rows; i++)
+        for (var j: number = 0; j < A.columns; j++)
+        {
+          if (i==j)
+            J.setAt(i, j, 0);
+          else
+            J.setAt(i, j, -A.getAt(i, j)/A.getAt(i, i));
+        } 
+      
+      return J;
+    }
 
     isNotValidMatrixSize(): boolean
     {
@@ -132,10 +150,11 @@ export class JacobiMethodComponent
       return !((this.rows && this.columns) && (this.rows > 0));
     }
 
+    /* should be useless
     showToView(iteration: number, matrix: Matrix): void
     {
       tempCalcContainer.appendChild(this.tableMatrix[i][j]);
-    }
+    }*/
 
     createRange(number)
     {

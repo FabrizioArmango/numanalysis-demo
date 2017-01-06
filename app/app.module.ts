@@ -6,7 +6,7 @@ import { NAComponent }  from './app.component';
 
 import { GaussJordanInverseComponent } from './gaussjordaninverse/gaussjordaninverse.component';
 import { JacobiMethodComponent } from './jacobimethod/jacobimethod.component';
-import {MatrixComponent} from './matrix/matrix.component';
+import {MatrixComponent} from './matrix/Matrix.component';
 import {MatrixCellComponent} from './matrix/matrix-cell/matrixcell.component';
 
 

@@ -1,5 +1,5 @@
 import {Component, NgModule} from '@angular/core';
-import { Matrix } from 'app/matrix/matrix';
+import { Matrix } from 'app/matrix/Matrix';
 @Component({
   selector: 'gauss-jordan-inverse',
   template:
@@ -29,7 +29,10 @@ import { Matrix } from 'app/matrix/matrix';
 
         <button (click)="onClick(matrixView.matrix)">Calc</button>
 
-        <div *ngFor="let matrix of logMatrices; let i = index" #tempCalcContainer>
+        <div
+          [class.centered-child]="true"
+          [class.bold-text]="true"
+          [hidden]="isNotValidMatrixSize()" *ngFor="let matrix of logMatrices; let i = index" #tempCalcContainer>          
           <br>
           <br>
           <p>{{getTitleOf(i)}}</p>
@@ -117,10 +120,11 @@ export class GaussJordanInverseComponent
       return !(this.rows && this.columns && this.rows > 0 && this.columns > 0);
     }
 
+    /* useless now
     showToView(iteration: number, matrix: Matrix): void
     {
       tempCalcContainer.appendChild(this.tableMatrix[i][j]);
-    }
+    }*/
 
     createRange(number)
     {

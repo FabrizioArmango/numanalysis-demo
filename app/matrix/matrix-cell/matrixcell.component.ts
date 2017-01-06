@@ -6,8 +6,6 @@ import { Component, Input, OnInit } from '@angular/core';
   `
   <input [class.inputText]="true" type="text" [(ngModel)]="value" [disabled]="disabled">
   `,
-
-  //styleUrls: ['src/view/matrix-view/matrixview.css',
   styleUrls: ['src/css/app.css']
 })
 

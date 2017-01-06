@@ -45,7 +45,11 @@ import { JacobiMethodComponent } from './jacobimethod/jacobimethod.component';
 export class NAComponent
 {
     title = 'Numerical Analysis';
-    algorithms = [{id: 1, name: 'Gauss-Jordan Inverse'}, {id: 2, name: 'Jacobi Method'}];
+    algorithms = [
+        {id: 1, name: 'Gauss-Jordan Inverse'}, 
+        {id: 2, name: 'Jacobi Method'},
+        {id: 3, name: 'Gauss-Seidel'}
+    ];
 
     selectedAlgorithm = {};
 

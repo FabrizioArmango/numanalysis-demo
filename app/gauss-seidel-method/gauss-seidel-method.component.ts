@@ -78,21 +78,6 @@ export class GaussSeidelComponent
     
     algorithm(inputM: Matrix, inputV: Matrix, inputX: Matrix, iterations: number): void
 	{
-			// (A|I)
-      /*
-      this.logTitles = [];
-      this.logMatrices = [];
-      this.logDescriptions = [];
-      */
-      /*
-      var M: Matrix = Matrix.DiagonalMatrixOf(inputM);
-      var B: Matrix = Matrix.LowerMatrixOf(inputM);
-      var C: Matrix = Matrix.UpperMatrixOf(inputM);
-      var N: Matrix = Matrix.SumBetween(B, C);
-      var MInv: Matrix = GaussJordanInverseComponent.algorithm(M);
-      */
-      //this.log("MInv", MInv, "Inversa con GaussJordan");
-
       var Bj: Matrix = GaussSeidelMethodComponent.GetGaussSeidelMatrix(inputM);
       this.log("Jacobi Matrix", Bj, "  ");
 
@@ -124,11 +109,11 @@ export class GaussSeidelComponent
       }
 		}
 
-    static GetGaussSeidelMatrix(A: Matrix): Matrix
+    static GetGaussSeidelIteration(A: Matrix, iteration: number): Matrix
     {
-        
+        var x_i = [b[i][0] - (sum1*x[j][0]) + sum2*]
     }
-
+    /*
     static GetJacobiMatrix(A: Matrix): Matrix
     {
       var J: Matrix = new Matrix(A.rows, A.columns);
@@ -144,7 +129,7 @@ export class GaussSeidelComponent
       
       return J;
     }
-
+        */
     isNotValidMatrixSize(): boolean
     {
       return !(this.rows && this.columns && this.rows > 0 && this.columns > 0);
@@ -154,12 +139,6 @@ export class GaussSeidelComponent
     {
       return !((this.rows && this.columns) && (this.rows > 0));
     }
-
-    /* should be useless
-    showToView(iteration: number, matrix: Matrix): void
-    {
-      tempCalcContainer.appendChild(this.tableMatrix[i][j]);
-    }*/
 
     createRange(number)
     {

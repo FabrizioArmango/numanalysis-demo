@@ -16,13 +16,7 @@ import { Matrix } from './Matrix';
   `,
   styleUrls: ['src/css/app.css']
 })
-/*
-<tr *ngFor="let row of rows">
-  <td *ngFor="let column of columns">
-    ele
-  </td>
-</tr>
-*/
+
 export class MatrixComponent implements OnInit
 {
     @Input() rows: number;
@@ -45,8 +39,6 @@ export class MatrixComponent implements OnInit
     updateMatrixValues(i, j, event): void
     {
       var target = event.target || event.srcElement || event.currentTarget;
-      //var idAttr = target.attributes.id;
-      //var value = idAttr.nodeValue;
       var value = target.value;
       this.matrix.setAt(i, j, value);
     }

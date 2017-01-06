@@ -120,12 +120,6 @@ export class GaussJordanInverseComponent
       return !(this.rows && this.columns && this.rows > 0 && this.columns > 0);
     }
 
-    /* useless now
-    showToView(iteration: number, matrix: Matrix): void
-    {
-      tempCalcContainer.appendChild(this.tableMatrix[i][j]);
-    }*/
-
     createRange(number)
     {
       var items: number[] = [];

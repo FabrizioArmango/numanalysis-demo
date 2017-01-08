@@ -98,42 +98,37 @@ export class Matrix
   }
 
   // Return Lower Matrix
-  static LowerMatrixOf(input: Matrix): Matrix
+  static LowerMatrixOf(input: Matrix, withDiagonal: Boolean = true): Matrix
   {
     var lower: Matrix = Matrix.ZeroMatrix(input.rows);
 
-    var j: number;
-
-    for (var i: number = 0; i < input.rows; i++)
-    {
-      j = i;
-
-      do
+    for (var j: number = 0; j < input.columns; j++)
+      for (var i: number = (withDiagonal == true) ? j : j + parseInt(1); i < input.rows; i++)
       {
+        console.log("i: "+i+", j: "+j+", value: "+input.getAt(i, j));
         lower.setAt(i, j, input.getAt(i, j));
-      } while (++j < input.columns);
-    }
-
+      }
+      
     return lower;
   }
 
   // Return Upper Matrix
-  static UpperMatrixOf(input: Matrix): Matrix
+  static UpperMatrixOf(input: Matrix, withDiagonal: Boolean = true): Matrix
   {
     var upper: Matrix = Matrix.ZeroMatrix(input.rows);
 
-    var j: number;
-
-    for (var i: number = 0; i < input.rows; i++)
+    var limitI: number;
+    
+    for (var j: number = 0; j < input.columns; j++)
     {
-      j = 0;
-
-      do
+      limitI = (withDiagonal == true) ? (j + parseInt(1)) : j;
+      for (var i: number = 0; i < limitI; i++)
       {
+        console.log("i: "+i+", j: "+j);
+        console.log("\r value: "+input.getAt(i, j));
         upper.setAt(i, j, input.getAt(i, j));
-      } while (++j < input.rows);
+      }
     }
-
     return upper;
   }
 

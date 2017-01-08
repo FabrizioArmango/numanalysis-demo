@@ -1,5 +1,7 @@
-import {Component, NgModule} from '@angular/core';
+import {Component, NgModule, EventEmitter} from '@angular/core';
+import { GaussJordanInverseComponent } from 'app/gaussjordaninverse/gaussjordaninverse.component';
 import { Matrix } from 'app/matrix/Matrix';
+import { MatrixPrint } from 'app/matrix/matrixprint.service';
 
 @Component({
   selector: 'gauss-seidel-method',
@@ -45,7 +47,7 @@ import { Matrix } from 'app/matrix/Matrix';
 
       </div>
       <button (click)="onClick(matrixView.matrix, constantView.matrix, vectorView.matrix)">Calc</button>
-      <div *ngFor="let matrix of logMatrices; let i = index" #tempCalcContainer>
+      <div *ngFor="let matrix of getMatrices(); let i = index" #tempCalcContainer>
         <br>
         <br>
         <p>{{getTitleOf(i)}}</p>
@@ -54,82 +56,71 @@ import { Matrix } from 'app/matrix/Matrix';
       </div>
       <br>
     `,
-  styleUrls: ['src/css/app.css']
+  styleUrls: ['src/css/app.css'],
+  providers: [ MatrixPrint ]
 })
 
 export class GaussSeidelComponent
 {
+
     rows: number;
     columns: number;
 
-    logTitles: Array;
-    logMatrices: Array;
-    logDescriptions: Array;
+
+    getTitleOf(i): Array {
+      return this.loggingService.logTitles[i];
+    }
+
+    getDescOf(i): Array {
+      return this.loggingService.logDescriptions[i];
+    }
+
+    getMatrices(): Array {
+      return this.loggingService.logMatrices;
+    }
+
+    constructor(private loggingService: MatrixPrint) {
+
+     }
 
     onClick(matrix: Matrix, constantV: Matrix, vectorX: Matrix): void
     {
-      this.logTitles = [];
-      this.logMatrices = [];
-      this.logDescriptions = [];
-
       this.algorithm(matrix, constantV, vectorX, 3);
     }
 
-    
+      
     algorithm(inputM: Matrix, inputV: Matrix, inputX: Matrix, iterations: number): void
-	{
-      var Bj: Matrix = GaussSeidelMethodComponent.GetGaussSeidelMatrix(inputM);
-      this.log("Jacobi Matrix", Bj, "  ");
-
-      var dV: Matrix = new Matrix(inputM.columns, 1);
-
-      for (var i: number = 0; i < dV.rows; i++)
-      {
-        /*
-          console.log("\ri: "+i);
-          console.log("\rv: "+inputV);
-          console.log("\rinputM: "+inputM);
-          console.log("\rinputV[ "+i+" ]: "+inputV.getAt(i, 0));
-        */
-          var value: number = parseFloat(parseFloat(inputV.getAt(i, 0)) / parseFloat(inputM.getAt(i, i)));
-          console.log("value: "+value);
-          dV.setAt(i, 0, value);
-      }
-      this.log("Vector d", dV, " ");
-
-      var outputV: Matrix = Matrix.CloneFrom(inputX);
-
-      for (var i: number = 0; i < iterations; i++)
-      {
-          console.log("iterazione: "+i);
-          outputV = Matrix.Multiply(Bj, outputV);
-          outputV = Matrix.CloneFrom(outputV);
-          outputV = Matrix.SumBetween(outputV, dV);
-          this.log("x("+i+"):", outputV, "iteration:"+(i+parseInt(1)));
-      }
-		}
-
-    static GetGaussSeidelIteration(A: Matrix, iteration: number): Matrix
     {
-        var x_i = [b[i][0] - (sum1*x[j][0]) + sum2*]
+        var Bgs: Matrix = this.GetGaussSeidelMatrix(inputM);
+        this.Log("Bgs Matrix", Bgs, "Matrice di Gauss Seidel");
+    }   
+
+    GetGaussSeidelMatrix(A: Matrix): Matrix
+    {
+        let D: Matrix = Matrix.DiagonalMatrixOf(A);
+        let B: Matrix = Matrix.LowerMatrixOf(A);
+        let C: Matrix = Matrix.UpperMatrixOf(A);
+        
+        // B*(-1)
+        for (var i: number = 0; i < B.rows; i++)
+            B.rowProduct(i, -1);
+        
+        
+        let M: Matrix = Matrix.SumBetween(D, B);
+
+        this.Log("M Matrix", M, "...");
+        let M_inv: Matrix = GaussJordanInverseComponent.algorithm(M);
+        this.Log("M_inv Matrix", M_inv, "...");
+        let Bgs: Matrix = Matrix.Multiply(M_inv, C);
+        this.Log("Bgs Matrix", Bgs, "...");
+        return Bgs;
     }
     /*
-    static GetJacobiMatrix(A: Matrix): Matrix
+    static GetGaussSeidelIteration(A: Matrix, vectorX: Matrix, iteration: number): Matrix
     {
-      var J: Matrix = new Matrix(A.rows, A.columns);
-
-      for (var i: number = 0; i < A.rows; i++)
-        for (var j: number = 0; j < A.columns; j++)
-        {
-          if (i==j)
-            J.setAt(i, j, 0);
-          else
-            J.setAt(i, j, -A.getAt(i, j)/A.getAt(i, i));
-        } 
-      
-      return J;
+        var x_i = b[i][0] - (sum1*vectorX[j][0] + sum2*vectorX[][])
     }
-        */
+    */
     isNotValidMatrixSize(): boolean
     {
       return !(this.rows && this.columns && this.rows > 0 && this.columns > 0);
@@ -150,20 +141,8 @@ export class GaussSeidelComponent
       return items;
     }
 
-    getTitleOf(num: number): string
+    Log(title: string, matrix: Matrix, description: string): void
     {
-      return this.logTitles[num];
-    }
-
-    getDescOf(num: number): string
-    {
-      return this.logDescriptions[num];
-    }
-
-    log(title: string, matrix: Matrix, description: string)
-    {
-      this.logTitles.push(title);
-      this.logMatrices.push(matrix);
-      this.logDescriptions.push(description);
+        this.loggingService.log(title, matrix, description);
     }
 }

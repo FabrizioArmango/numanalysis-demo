@@ -5,17 +5,17 @@ import { FormsModule }   from '@angular/forms';
 import { NAComponent }  from './app.component';
 
 import { GaussJordanInverseComponent } from './gaussjordaninverse/gaussjordaninverse.component';
+import { GaussSeidelComponent } from './gauss-seidel-method/gauss-seidel-method.component';
 import { JacobiMethodComponent } from './jacobimethod/jacobimethod.component';
 import {MatrixComponent} from './matrix/Matrix.component';
 import {MatrixCellComponent} from './matrix/matrix-cell/matrixcell.component';
-
 
 @NgModule({
   imports:
   [
     BrowserModule, FormsModule
   ],
-  declarations: [ NAComponent, GaussJordanInverseComponent, JacobiMethodComponent, MatrixComponent, MatrixCellComponent ],
+  declarations: [ NAComponent, GaussJordanInverseComponent, JacobiMethodComponent, GaussSeidelComponent, MatrixComponent, MatrixCellComponent],
   bootstrap:    [ NAComponent ]
 })
 

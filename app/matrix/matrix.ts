@@ -37,7 +37,7 @@ export class Matrix
   }
 
   //  >  Other Operations
-  // Multiply a raw by a scalar
+  // Multiply a row by a scalar
   rowProduct(row: number, scalar: number): void
 	{
 		for (var j = 0; j < this.columns; j++)

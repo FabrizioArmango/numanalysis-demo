@@ -2,6 +2,8 @@ import { Component, ViewEncapsulation  }        from '@angular/core';
 import { MatrixComponent }  from './matrix/matrix.component';
 import { GaussJordanInverseComponent } from './gaussjordaninverse/gaussjordaninverse.component';
 import { JacobiMethodComponent } from './jacobimethod/jacobimethod.component';
+import { GaussSeidelComponent } from './gauss-seidel-method/gauss-seidel-method.component';
+
 
 @Component
 (
@@ -29,6 +31,9 @@ import { JacobiMethodComponent } from './jacobimethod/jacobimethod.component';
                 <ng-container *ngSwitchCase="2">
                     <jacobi-method></jacobi-method>
                 </ng-container>
+                <ng-container *ngSwitchCase="3">
+                    <gauss-seidel-method></gauss-seidel-method>
+                </ng-container>                
                 <ng-container *ngSwitchDefault>
                     <label>Nessuna implementazione</label>
                 </ng-container>

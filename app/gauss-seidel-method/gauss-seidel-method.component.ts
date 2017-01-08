@@ -79,9 +79,7 @@ export class GaussSeidelComponent
       return this.loggingService.logMatrices;
     }
 
-    constructor(private loggingService: MatrixPrint) {
-
-     }
+   constructor(private loggingService: MatrixPrint) {}
 
     onClick(matrix: Matrix, constantV: Matrix, vectorX: Matrix): void
     {
@@ -98,14 +96,17 @@ export class GaussSeidelComponent
     GetGaussSeidelMatrix(A: Matrix): Matrix
     {
         let D: Matrix = Matrix.DiagonalMatrixOf(A);
-        let B: Matrix = Matrix.LowerMatrixOf(A);
-        let C: Matrix = Matrix.UpperMatrixOf(A);
+        let B: Matrix = Matrix.LowerMatrixOf(A, false);
+        let C: Matrix = Matrix.UpperMatrixOf(A, false);
         
+        this.Log("D Matrix", D, "...");
+        this.Log("B Matrix", B, "...");
+        this.Log("C Matrix", C, "...");
         // B*(-1)
         for (var i: number = 0; i < B.rows; i++)
             B.rowProduct(i, -1);
-        
-        
+        this.Log("-B Matrix", B, "...");
+
         let M: Matrix = Matrix.SumBetween(D, B);
 
         this.Log("M Matrix", M, "...");

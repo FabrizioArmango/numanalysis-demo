@@ -12,15 +12,15 @@ import { GaussSeidelComponent } from './gauss-seidel-method/gauss-seidel-method.
         template:
         `
             <h1><span>{{title}}</span></h1>
-        <div [class.centered-div]="true">
-            <ul [class.centered-child]="true" class="algorithms"> <h2>Algorithms</h2>
-                <li *ngFor="let algorithm of algorithms"
-                    [class.selected]="algorithm === selectedAlgorithm"
-                    (click)="onSelect(algorithm)">
-                    <span class="badge">{{algorithm.id}}</span> {{algorithm.name}}
-                </li>
-            </ul>
-        </div>
+            <div [class.centered-div]="true">
+                <ul [class.centered-child]="true" class="algorithms"> <h2>Algorithms</h2>
+                    <li *ngFor="let algorithm of algorithms"
+                        [class.selected]="algorithm === selectedAlgorithm"
+                        (click)="onSelect(algorithm)">
+                        <span class="badge">{{algorithm.id}}</span> {{algorithm.name}}
+                    </li>
+                </ul>
+            </div>
             <div *ngIf="selectedAlgorithm">
               <h2>{{selectedAlgorithm.name}} Demo</h2>
 

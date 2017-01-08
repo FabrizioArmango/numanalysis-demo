@@ -36,12 +36,18 @@ export class Matrix
     this.elements[i][j] = value;
   }
 
+  scalarMultiply (scalar: number): Matrix
+  {
+    for (var i: number = 0; i < this.rows; i++)
+        this.rowProduct(i, scalar);
+  }
+
   //  >  Other Operations
   // Multiply a row by a scalar
   rowProduct(row: number, scalar: number): void
 	{
 		for (var j = 0; j < this.columns; j++)
-			this.setAt(row, j, parseFloat(this.getAt(row, j)) * scalar)
+			this.setAt(row, j, this.getAt(row, j) * scalar)
 	}
 
   isPivotNotZero(i: number): bool
@@ -68,8 +74,27 @@ export class Matrix
     return copied;
   }
 
+  inverse2x2(): Matrix
+  {
+    let inverse: Matrix = new Matrix (2, 2);
+        inverse.setAt(0, 0, this.getAt(1, 1));
+        inverse.setAt(0, 1, -this.getAt(0, 1));
+        inverse.setAt(1, 0, -this.getAt(1, 0));
+        inverse.setAt(1, 1, this.getAt(0, 0));
+    let det: number = this.determinant2x2();
+        inverse.scalarMultiply(1/det);
+    return inverse;
+  }
+
+
   //  >  Static Methods
   //
+
+  determinant2x2(): number
+  {
+      return (this.getAt(0,0) * this.getAt(1,1)) - (this.getAt(0,1) * this.getAt(1,0));
+  }
+
   // Clone the matrix passed as argument
   static CloneFrom(input: Matrix): Matrix
 	{
@@ -185,7 +210,7 @@ export class Matrix
 	  return product;
   }
 
-  static mergeHorizontally(inputM1: Matrix, inputM2: Matrix): Matrix
+  static MergeHorizontally(inputM1: Matrix, inputM2: Matrix): Matrix
 	{
     console.log("Merge");
 		var merged: Matrix = new Matrix(inputM1.rows, parseFloat(inputM1.columns) + parseFloat(inputM2.columns));

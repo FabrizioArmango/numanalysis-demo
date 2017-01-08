@@ -46,13 +46,30 @@ import { MatrixPrint } from 'app/matrix/matrixprint.service';
           <br>
 
       </div>
-      <button (click)="onClick(matrixView.matrix, constantView.matrix, vectorView.matrix)">Calc</button>
-      <div *ngFor="let matrix of getMatrices(); let i = index" #tempCalcContainer>
+
+      <h1>
+        <span>
+          <button (click)="onClick(matrixView.matrix, constantView.matrix, vectorView.matrix)">Calc</button>
+        </span>
+      </h1>
+
+      <div 
+        [class.centered-child]="true"
+        [class.bold-text]="true"
+        [hidden]="isNotValidMatrixSize()"
+        *ngFor="let matrix of getMatrices(); let i = index" #tempCalcContainer>
         <br>
         <br>
-        <p>{{getTitleOf(i)}}</p>
-        <matrix-view [rows]="matrix.rows" [columns]="matrix.columns" [matrix]="matrix" [disabled]="true"> </matrix-view>
+
+          <h3>
+            <span>
+              {{getTitleOf(i)}}
+            </span>
+          </h3>
         <span>{{getDescOf(i)}}</span>
+
+        <matrix-view [rows]="matrix.rows" [columns]="matrix.columns" [matrix]="matrix" [disabled]="true"> </matrix-view>
+        
       </div>
       <br>
     `,
@@ -66,6 +83,14 @@ export class GaussSeidelComponent
     rows: number;
     columns: number;
 
+    solutionX: Array;
+
+    M_inv: Matrix;
+
+    Log(title: string, matrix: Matrix, description: string): void
+    {
+        this.loggingService.log(title, matrix, description);
+    }
 
     getTitleOf(i): Array {
       return this.loggingService.logTitles[i];
@@ -79,7 +104,7 @@ export class GaussSeidelComponent
       return this.loggingService.logMatrices;
     }
 
-   constructor(private loggingService: MatrixPrint) {}
+    constructor(private loggingService: MatrixPrint) {}
 
     onClick(matrix: Matrix, constantV: Matrix, vectorX: Matrix): void
     {
@@ -89,8 +114,29 @@ export class GaussSeidelComponent
       
     algorithm(inputM: Matrix, inputV: Matrix, inputX: Matrix, iterations: number): void
     {
-        var Bgs: Matrix = this.GetGaussSeidelMatrix(inputM);
+        this.solutionX = [];
+        this.solutionX.push(inputX);
+
+        let d: Matrix = new Matrix(inputV.rows, inputV.columns);
+        let Bgs: Matrix = this.GetGaussSeidelMatrix(inputM);
+
         this.Log("Bgs Matrix", Bgs, "Matrice di Gauss Seidel");
+        this.Log("Inverse of (D-B)", this.M_inv, " ");
+
+        d = Matrix.CloneFrom(Matrix.Multiply(Bgs, inputV));
+        this.Log("Vector d", d, " ");
+        
+        let iteration: number = 0;
+        let solution: Matrix;
+        while (iteration < iterations)
+        {      
+            solution = Matrix.Multiply(Bgs, this.solutionX[iteration]);
+            solution = Matrix.SumBetween(solution, d);
+            this.solutionX.push(solution);
+            this.Log("X("+iteration+")", this.solutionX[iteration], " ");
+            iteration++;
+        }
+        
     }   
 
     GetGaussSeidelMatrix(A: Matrix): Matrix
@@ -103,17 +149,21 @@ export class GaussSeidelComponent
         this.Log("B Matrix", B, "...");
         this.Log("C Matrix", C, "...");
         // B*(-1)
-        for (var i: number = 0; i < B.rows; i++)
-            B.rowProduct(i, -1);
+        B.scalarMultiply(-1);
         this.Log("-B Matrix", B, "...");
 
         let M: Matrix = Matrix.SumBetween(D, B);
-
+        console.debug("FINO A QUI TUTTO BENE 1");
         this.Log("M Matrix", M, "...");
-        let M_inv: Matrix = GaussJordanInverseComponent.algorithm(M);
-        this.Log("M_inv Matrix", M_inv, "...");
-        let Bgs: Matrix = Matrix.Multiply(M_inv, C);
-        this.Log("Bgs Matrix", Bgs, "...");
+        console.debug("FINO A QUI TUTTO BENE 10");
+
+        this.M_inv = (M.rows == 2) ? M.inverse2x2() : GaussJordanInverseComponent.algorithm(M);
+        console.debug("FINO A QUI TUTTO BENE 2");
+        this.Log("M_inv Matrix", this.M_inv, "...");
+        console.debug("FINO A QUI TUTTO BENE 3");
+        let Bgs: Matrix = Matrix.Multiply(this.M_inv, C);
+
+        console.debug("FINO A QUI TUTTO BENE 4");
         return Bgs;
     }
     /*
@@ -140,10 +190,5 @@ export class GaussSeidelComponent
          items.push(i);
       }
       return items;
-    }
-
-    Log(title: string, matrix: Matrix, description: string): void
-    {
-        this.loggingService.log(title, matrix, description);
     }
 }

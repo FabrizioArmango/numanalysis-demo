@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Matrix } from 'app/matrix/Matrix';
 
 @Injectable()
 export class MatrixPrint 
@@ -18,7 +19,7 @@ export class MatrixPrint
     log(title: string, matrix: Matrix, description: string)
     {
         this.logTitles.push(title);
-        this.logMatrices.push(matrix);
+        this.logMatrices.push(Matrix.CloneFrom(matrix));
         this.logDescriptions.push(description);
     }
 

@@ -1,20 +1,41 @@
 body {
   font-family: Arial, Helvetica, sans-serif;
   color: #333333;
+  margin-top: 0px;
   margin-left: 0;
   margin-right: 0;
 }
 
-h1 {
+h1 
+{
+  text-align: center;
   color: #00B0FF;
-  font-size: 250%;
+  font-size: 50px;
   background-color: #01579B;
+
   padding-top: 10px;
   padding-bottom: 10px;
-  padding-left: 0;
-  margin-left: 0;
+  padding-left: 0px;
+
+  margin-top: 0px;
+  margin-left: 0px;
+  margin-right: 0px;
 }
 
-span {
+h3 
+{
+  text-align: center;
+  color: #ffffff;
+  font-size: 25px;
+  background-color: #01579B;
+
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+span 
+{
+  text-align: center;
   margin-left: 10px;
+  margin-right: 10px;
 }

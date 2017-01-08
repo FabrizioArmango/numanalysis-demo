@@ -1,6 +1,8 @@
 import {Component, NgModule} from '@angular/core';
 import { Matrix } from 'app/matrix/Matrix';
 import { GaussJordanInverseComponent } from 'app/gaussjordaninverse/gaussjordaninverse.component';
+import { MatrixPrint } from 'app/matrix/matrixprint.service';
+
 @Component({
   selector: 'jacobi-method',
   template:
@@ -44,17 +46,35 @@ import { GaussJordanInverseComponent } from 'app/gaussjordaninverse/gaussjordani
           <br>
 
       </div>
-      <button (click)="onClick(matrixView.matrix, constantView.matrix, vectorView.matrix)">Calc</button>
-      <div *ngFor="let matrix of logMatrices; let i = index" #tempCalcContainer>
+
+      <h1>
+        <span>
+          <button (click)="onClick(matrixView.matrix, constantView.matrix, vectorView.matrix)">Calc</button>
+        </span>
+      </h1>
+      
+      <div 
+        [class.centered-child]="true"
+        [class.bold-text]="true"
+        [hidden]="isNotValidMatrixSize()"
+        *ngFor="let matrix of getMatrices(); let i = index" #tempCalcContainer>
         <br>
         <br>
-        <p>{{getTitleOf(i)}}</p>
-        <matrix-view [rows]="matrix.rows" [columns]="matrix.columns" [matrix]="matrix" [disabled]="true"> </matrix-view>
+
+        <h3>
+          <span>
+            {{getTitleOf(i)}}
+          </span>
+        </h3>
+
         <span>{{getDescOf(i)}}</span>
+
+        <matrix-view [rows]="matrix.rows" [columns]="matrix.columns" [matrix]="matrix" [disabled]="true"> </matrix-view>        
       </div>
       <br>
     `,
-  styleUrls: ['src/css/app.css']
+  styleUrls: ['src/css/app.css'],
+  providers: [ MatrixPrint ]
 })
 
 export class JacobiMethodComponent
@@ -62,55 +82,45 @@ export class JacobiMethodComponent
     rows: number;
     columns: number;
 
-    logTitles: Array;
-    logMatrices: Array;
-    logDescriptions: Array;
+    Log(title: string, matrix: Matrix, description: string): void
+    {
+        this.loggingService.log(title, matrix, description);
+    }
+
+    getTitleOf(i): Array {
+      return this.loggingService.logTitles[i];
+    }
+
+    getDescOf(i): Array {
+      return this.loggingService.logDescriptions[i];
+    }
+
+    getMatrices(): Array {
+      return this.loggingService.logMatrices;
+    }
+
+    constructor(private loggingService: MatrixPrint) {}
 
     onClick(matrix: Matrix, constantV: Matrix, vectorX: Matrix): void
     {
-      this.logTitles = [];
-      this.logMatrices = [];
-      this.logDescriptions = [];
-
       this.algorithm(matrix, constantV, vectorX, 3);
     }
 
     
     algorithm(inputM: Matrix, inputV: Matrix, inputX: Matrix, iterations: number): void
 		{
-			// (A|I)
-      /*
-      this.logTitles = [];
-      this.logMatrices = [];
-      this.logDescriptions = [];
-      */
-      /*
-      var M: Matrix = Matrix.DiagonalMatrixOf(inputM);
-      var B: Matrix = Matrix.LowerMatrixOf(inputM);
-      var C: Matrix = Matrix.UpperMatrixOf(inputM);
-      var N: Matrix = Matrix.SumBetween(B, C);
-      var MInv: Matrix = GaussJordanInverseComponent.algorithm(M);
-      */
-      //this.log("MInv", MInv, "Inversa con GaussJordan");
-
       var Bj: Matrix = JacobiMethodComponent.GetJacobiMatrix(inputM);
-      this.log("Jacobi Matrix", Bj, "  ");
+      this.Log("Jacobi Matrix", Bj, "  ");
 
       var dV: Matrix = new Matrix(inputM.columns, 1);
 
       for (var i: number = 0; i < dV.rows; i++)
       {
-        /*
-          console.log("\ri: "+i);
-          console.log("\rv: "+inputV);
-          console.log("\rinputM: "+inputM);
-          console.log("\rinputV[ "+i+" ]: "+inputV.getAt(i, 0));
-        */
           var value: number = parseFloat(parseFloat(inputV.getAt(i, 0)) / parseFloat(inputM.getAt(i, i)));
           console.log("value: "+value);
           dV.setAt(i, 0, value);
       }
-      this.log("Vector d", dV, " ");
+      this.Log("Vector d", dV, " ");
 
       var outputV: Matrix = Matrix.CloneFrom(inputX);
 
@@ -120,7 +130,7 @@ export class JacobiMethodComponent
           outputV = Matrix.Multiply(Bj, outputV);
           outputV = Matrix.CloneFrom(outputV);
           outputV = Matrix.SumBetween(outputV, dV);
-          this.log("x("+i+"):", outputV, "iteration:"+(i+parseInt(1)));
+          this.Log("x("+i+"):", outputV, "iteration:"+(i+parseInt(1)));
       }
 		}
 
@@ -150,12 +160,6 @@ export class JacobiMethodComponent
       return !((this.rows && this.columns) && (this.rows > 0));
     }
 
-    /* should be useless
-    showToView(iteration: number, matrix: Matrix): void
-    {
-      tempCalcContainer.appendChild(this.tableMatrix[i][j]);
-    }*/
-
     createRange(number)
     {
       var items: number[] = [];
@@ -164,22 +168,5 @@ export class JacobiMethodComponent
          items.push(i);
       }
       return items;
-    }
-
-    getTitleOf(num: number): string
-    {
-      return this.logTitles[num];
-    }
-
-    getDescOf(num: number): string
-    {
-      return this.logDescriptions[num];
-    }
-
-    log(title: string, matrix: Matrix, description: string)
-    {
-      this.logTitles.push(title);
-      this.logMatrices.push(matrix);
-      this.logDescriptions.push(description);
-    }
+    }    
 }

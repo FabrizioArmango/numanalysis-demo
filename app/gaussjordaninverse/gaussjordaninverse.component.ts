@@ -1,5 +1,7 @@
 import {Component, NgModule} from '@angular/core';
 import { Matrix } from 'app/matrix/Matrix';
+import { MatrixPrint } from 'app/matrix/matrixprint.service';
+
 @Component({
   selector: 'gauss-jordan-inverse',
   template:
@@ -25,25 +27,39 @@ import { Matrix } from 'app/matrix/Matrix';
 
             <matrix-view [rows]="rows" [columns]="columns" #matrixView></matrix-view>
         </div>
+        <br><br>
+
       </div>
-
-        <button (click)="onClick(matrixView.matrix)">Calc</button>
-
+        
+        <h1>
+          <span>
+            <button (click)="onClick(matrixView.matrix)">Calc</button>
+          </span>
+        </h1>
+      
         <div
           [class.centered-child]="true"
           [class.bold-text]="true"
-          [hidden]="isNotValidMatrixSize()" *ngFor="let matrix of logMatrices; let i = index" #tempCalcContainer>          
+          [hidden]="isNotValidMatrixSize()" *ngFor="let matrix of getMatrices(); let i = index" #tempCalcContainer>          
           <br>
           <br>
-          <p>{{getTitleOf(i)}}</p>
-          <matrix-view [rows]="matrix.rows" [columns]="matrix.columns" [matrix]="matrix" [disabled]="true"> </matrix-view>
+
+          <h3>
+            <span>
+              {{getTitleOf(i)}}
+            </span>
+          </h3>
+
           <span>{{getDescOf(i)}}</span>
+
+          <matrix-view [rows]="matrix.rows" [columns]="matrix.columns" [matrix]="matrix" [disabled]="true"> </matrix-view>
+          
       </div>
       <br>
 
     `,
-  styleUrls: ['src/css/app.css']
-  //Columns:<input [(ngModel)]="columns">
+  styleUrls: ['src/css/app.css'],
+  providers: [ MatrixPrint ]
 })
 
 export class GaussJordanInverseComponent
@@ -51,9 +67,19 @@ export class GaussJordanInverseComponent
     rows: number;
     columns: number;
 
-    logTitles: Array;
-    logMatrices: Array;
-    logDescriptions: Array;
+    getTitleOf(i): Array {
+      return this.loggingService.logTitles[i];
+    }
+
+    getDescOf(i): Array {
+      return this.loggingService.logDescriptions[i];
+    }
+
+    getMatrices(): Array {
+      return this.loggingService.logMatrices;
+    }
+
+    constructor(private loggingService: MatrixPrint) {}
 
     onClick(matrix: Matrix): void
     {
@@ -62,12 +88,8 @@ export class GaussJordanInverseComponent
 
     algorithm(input: Matrix): Matrix
 		{
-			// (A|I)
-      this.logTitles = [];
-      this.logMatrices = [];
-      this.logDescriptions = [];
 
-      var output: Matrix = Matrix.CloneFrom(Matrix.mergeHorizontally(input, Matrix.Identity(input.rows)));
+      var output: Matrix = Matrix.CloneFrom(Matrix.MergeHorizontally(input, Matrix.Identity(input.rows)));
 
 			var L_i: Matrix;
 			//Iterations:
@@ -78,12 +100,12 @@ export class GaussJordanInverseComponent
 				{
           console.log("computing L_i");
 					L_i = GaussJordanInverseComponent.GaussJordanLower(output, it);
-          this.log("Lower"+it, L_i, "Triangolare inferiore");
+          this.Log("Lower"+it, L_i, "Triangolare inferiore");
 					//trace("L_"+it+": "+L_i);
 					//trace("A^"+it+"|I^"+it+this);
 
 					output = Matrix.CloneFrom(Matrix.Multiply(L_i, output));
-          this.log("( A"+it+" | I"+it+" )", Matrix.CloneFrom(output), "Iterazione: "+it);
+          this.Log("( A"+it+" | I"+it+" )", Matrix.CloneFrom(output), "Iterazione: "+it);
           //this.outputs.push(output);
 				}
         // ADD PIVOT ZERO CASE
@@ -95,10 +117,10 @@ export class GaussJordanInverseComponent
 			// Divide rows by pivots
 			for (var i = 0; i < output.rows; i++)
 				output.rowProduct(i, 1/output.getAt(i,i));
-      this.log("Output", output, "Dividing by pivots");
+      this.Log("Output", output, "Dividing by pivots");
 
       output = output.copyMatrixFrom(0, parseInt(output.columns)/parseInt(2), output.rows, output.columns)
-      this.log("Inverse", output, "Deleting Identity to left");
+      this.Log("Inverse", output, "Deleting Identity to left");
       return output;
 		}
 
@@ -128,24 +150,7 @@ export class GaussJordanInverseComponent
          items.push(i);
       }
       return items;
-    }
-
-    getTitleOf(num: number): string
-    {
-      return this.logTitles[num];
-    }
-
-    getDescOf(num: number): string
-    {
-      return this.logDescriptions[num];
-    }
-
-    log(title: string, matrix: Matrix, description: string)
-    {
-      this.logTitles.push(title);
-      this.logMatrices.push(matrix);
-      this.logDescriptions.push(description);
-    }
+    }    
 
     static algorithm(input: Matrix): Matrix
 		{
@@ -175,4 +180,9 @@ export class GaussJordanInverseComponent
 
       return output;
 		}
+
+    Log(title: string, matrix: Matrix, description: string): void
+    {
+        this.loggingService.log(title, matrix, description);
+    }
 }

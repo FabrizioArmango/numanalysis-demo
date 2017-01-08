@@ -153,17 +153,17 @@ export class GaussSeidelComponent
         this.Log("-B Matrix", B, "...");
 
         let M: Matrix = Matrix.SumBetween(D, B);
-        console.debug("FINO A QUI TUTTO BENE 1");
+        
         this.Log("M Matrix", M, "...");
-        console.debug("FINO A QUI TUTTO BENE 10");
+        
 
         this.M_inv = (M.rows == 2) ? M.inverse2x2() : GaussJordanInverseComponent.algorithm(M);
-        console.debug("FINO A QUI TUTTO BENE 2");
+        
         this.Log("M_inv Matrix", this.M_inv, "...");
-        console.debug("FINO A QUI TUTTO BENE 3");
+        
         let Bgs: Matrix = Matrix.Multiply(this.M_inv, C);
 
-        console.debug("FINO A QUI TUTTO BENE 4");
+        
         return Bgs;
     }
     /*

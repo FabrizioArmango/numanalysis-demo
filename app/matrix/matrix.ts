@@ -36,6 +36,35 @@ export class Matrix
     this.elements[i][j] = value;
   }
 
+  // TODO: test
+  // check if matrix is diagonally dominant
+  isDiagonallyDominantForRows(strictly: boolean = false): boolean
+  {
+    let tmp: number;
+    let sum: number;
+
+    var output: boolean = false;
+
+    for (let i: number = 0; i < this.rows; i++)
+    {
+      // |a[i][i]|
+      tmp = Math.abs(this.getAt(i, i));
+
+      for (let j: number = 0; j < this.columns; j++)
+        if (i != j)
+          sum += Math.abs(this.getAt(i, j));
+      
+      if (strictly == true)
+      {
+        if (tmp <= sum)
+          return false;
+      } else if (tmp < sum)
+          return false;
+    }
+    return true;
+  }
+
+  // TODO: test
   // 
   maxInColumnIdx(i: number): number
   {
@@ -56,6 +85,7 @@ export class Matrix
     return idx;
   }
 
+  // TODO: test
   // should be
   swapRows(i: number, j: number): void
   {

@@ -7,7 +7,13 @@ import { MatrixPrint } from 'app/matrix/matrixprint.service';
   selector: 'gauss-seidel-method',
   template:
     `
-      <div [class.centered-div]="true">
+      <div (click)="switchSizeSpoilerVisibility()">
+        Size
+      </div>
+      <div 
+        #inputSizeSpoiler 
+        [class.centered-div]="true"
+        *ngIf="sizeSpoilerHidden()">
         <div *ngIf="isNotValidMatrixSize()">
           Type valid # of rows and # of columns
         </div>
@@ -49,7 +55,9 @@ import { MatrixPrint } from 'app/matrix/matrixprint.service';
 
       <h1>
         <span>
-          <button (click)="onClick(matrixView.matrix, constantView.matrix, vectorView.matrix)">Calc</button>
+          <button 
+            [hidden]="calcButtonHidden()"
+            (click)="onClick(matrixView.matrix, constantView.matrix, vectorView.matrix)">Calc</button>
         </span>
       </h1>
 
@@ -87,6 +95,24 @@ export class GaussSeidelComponent
 
     M_inv: Matrix;
 
+    
+    _sizeSpoilerHidden: boolean = false;
+    sizeSpoilerHidden(): Boolean
+    {
+      
+    }
+
+    switchSizeSpoilerVisibility(): void
+    {
+      this._sizeSpoilerHidden = !this._sizeSpoilerHidden;
+    }
+
+    _calcButtonHidden: boolean = false;
+    calcButtonHidden(): Boolean
+    {
+      return this._calcButtonHidden;
+    }
+
     Log(title: string, matrix: Matrix, description: string): void
     {
         this.loggingService.log(title, matrix, description);
@@ -108,12 +134,14 @@ export class GaussSeidelComponent
 
     onClick(matrix: Matrix, constantV: Matrix, vectorX: Matrix): void
     {
+      this._calcButtonVisibility = true;
+      
       this.algorithm(matrix, constantV, vectorX, 3);
     }
 
       
     algorithm(inputM: Matrix, inputV: Matrix, inputX: Matrix, iterations: number): void
-    {
+    {      
         this.solutionX = [];
         this.solutionX.push(inputX);
 

@@ -24,22 +24,57 @@ export class Matrix
 
   //  >  Basic Operation
   // Return value at position (i, j)
-  getAt(i, j): number
+  getAt(i: number, j: number): number
   {
     return this.elements[i][j];
   }
 
   // Set value at position (i, j)
-  setAt(i, j, value): void
+  setAt(i: number, j: number, value): void
   {
     //console.log("setAt("+i+", "+j+", "+value+")");
     this.elements[i][j] = value;
+  }
+
+  // 
+  maxInColumnIdx(i: number): number
+  {
+    let idx: number;
+    let max: number = 0;
+
+    let value: number;
+    for (let j: number; j < this.columns; j++)
+    {
+      value = this.getAt(i, j);
+      if (max < value)
+      {
+        max = value;
+        idx = j;
+      }
+    }
+
+    return idx;
+  }
+
+  // should be
+  swapRows(i: number, j: number): void
+  {
+    let temp: Array<number>;
+    temp = this.elements[i];
+    this.elements[i] = this.elements[j];
+    this.elements[j] = temp;
   }
 
   scalarMultiply (scalar: number): Matrix
   {
     for (var i: number = 0; i < this.rows; i++)
         this.rowProduct(i, scalar);
+  }
+
+  sumMultipliedRowToRow(multi: number, row: number, target: number)
+  {
+    for (let j: number = 0; j < this.columns; j++)
+      this.setAt(target, j, this.getAt(target, j) + multi*this.getAt(row, j));
   }
 
   //  >  Other Operations

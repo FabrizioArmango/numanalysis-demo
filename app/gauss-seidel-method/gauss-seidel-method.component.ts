@@ -7,26 +7,27 @@ import { MatrixPrint } from 'app/matrix/matrixprint.service';
   selector: 'gauss-seidel-method',
   template:
     `
-      <div (click)="switchSizeSpoilerVisibility()">
-        Size
+      <div>
+         <button (click)="switchSizeSpoilerVisibility()"> Size </button>
       </div>
       <div 
         #inputSizeSpoiler 
-        [class.centered-div]="true"
-        *ngIf="sizeSpoilerHidden()">
-        <div *ngIf="isNotValidMatrixSize()">
-          Type valid # of rows and # of columns
-        </div>
-        <div>
-          <div [class.inline-block]="true">Rows:<br>
-            <input  [class.inputText]="true" type="number" [(ngModel)]="rows">
-          </div>
-          <div [class.inline-block]="true">Columns:<br>
-            <input  [class.inputText]="true" type="number" [(ngModel)]="columns">
-          </div>
+        [class.centered-div]="true">
 
-        </div>
+        <div *ngIf="sizeSpoilerVisible()">
+            <div *ngIf="isNotValidMatrixSize()">
+              Type valid # of rows and # of columns
+            </div>
 
+            <div>
+                <div [class.inline-block]="true">Rows:<br>
+                    <input  [class.inputText]="true" type="number" [(ngModel)]="rows">
+                </div>
+                <div [class.inline-block]="true">Columns:<br>
+                    <input  [class.inputText]="true" type="number" [(ngModel)]="columns">
+                </div>
+            </div>
+        </div>
 
           <br>
 
@@ -96,15 +97,15 @@ export class GaussSeidelComponent
     M_inv: Matrix;
 
     
-    _sizeSpoilerHidden: boolean = false;
-    sizeSpoilerHidden(): Boolean
+    _sizeSpoilerVisible: boolean = true;
+    sizeSpoilerVisible(): Boolean
     {
-      
+      return this._sizeSpoilerVisible;
     }
 
     switchSizeSpoilerVisibility(): void
     {
-      this._sizeSpoilerHidden = !this._sizeSpoilerHidden;
+      this._sizeSpoilerVisible = !this._sizeSpoilerVisible;
     }
 
     _calcButtonHidden: boolean = false;

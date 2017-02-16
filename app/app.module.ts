@@ -7,6 +7,8 @@ import { NAComponent }  from './app.component';
 import { GaussJordanInverseComponent } from './gaussjordaninverse/gaussjordaninverse.component';
 import { GaussSeidelComponent } from './gauss-seidel-method/gauss-seidel-method.component';
 import { JacobiMethodComponent } from './jacobimethod/jacobimethod.component';
+import { CholeskyMethodComponent } from './cholesky-method/cholesky-method.component';
+
 import {MatrixComponent} from './matrix/Matrix.component';
 import {MatrixCellComponent} from './matrix/matrix-cell/matrixcell.component';
 
@@ -15,7 +17,7 @@ import {MatrixCellComponent} from './matrix/matrix-cell/matrixcell.component';
   [
     BrowserModule, FormsModule
   ],
-  declarations: [ NAComponent, GaussJordanInverseComponent, JacobiMethodComponent, GaussSeidelComponent, MatrixComponent, MatrixCellComponent],
+  declarations: [ NAComponent, GaussJordanInverseComponent, JacobiMethodComponent, GaussSeidelComponent,CholeskyMethodComponent, MatrixComponent, MatrixCellComponent],
   bootstrap:    [ NAComponent ]
 })
 

@@ -5,7 +5,9 @@ import { Matrix } from './Matrix';
   selector: 'matrix-view',
   template:
   `
-    <table [class.centered-child]="true">
+  <div>
+    <span class="warningMsg" *ngIf="isNotValidMatrixSize()">Illegal size.</span>
+    <table>
       <tr  *ngFor="let row of createRange(rows); let i = index">
           <td  *ngFor="let column of createRange(columns); let j = index">
               <matrix-cell (keyup)="updateMatrixValues(i, j, $event)" [value]="(this.matrix) ? this.matrix.getAt(i,j): ''" [disabled]="disabled"></matrix-cell>
@@ -13,6 +15,7 @@ import { Matrix } from './Matrix';
           </td>
       </tr>
     </table>
+  <div>
   `,
   styleUrls: ['src/css/app.css']
 })
@@ -51,5 +54,10 @@ export class MatrixComponent implements OnInit
          items.push(i);
       }
       return items;
+    }
+
+    isNotValidMatrixSize(): boolean
+    {
+      return !(this.rows && this.columns && this.rows > 0 && this.columns > 0);
     }
 }

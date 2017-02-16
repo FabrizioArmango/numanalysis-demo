@@ -7,51 +7,41 @@ import { MatrixPrint } from 'app/matrix/matrixprint.service';
   selector: 'jacobi-method',
   template:
     `
-      <div [class.centered-div]="true">
         <div *ngIf="isNotValidMatrixSize()">
           Type valid # of rows and # of columns
         </div>
         <div>
-          <div [class.inline-block]="true">Rows:<br>
+          <div class="inline-block">Rows:<br>
             <input  [class.inputText]="true" type="number" [(ngModel)]="rows">
           </div>
-          <div [class.inline-block]="true">Columns:<br>
+          <div class="inline-block">Columns:<br>
             <input  [class.inputText]="true" type="number" [(ngModel)]="columns">
           </div>
-
         </div>
 
-
-          <br>
-
-          <div
-            [class.centered-child]="true"
-            [class.bold-text]="true"
-            [hidden]="isNotValidMatrixSize()">
+        <div class="inline-block" [hidden]="isNotValidVectorSize()">
           Matrix:
-              <br>
+            <matrix-view [rows]="rows" [columns]="columns" #matrixView></matrix-view>
+        </div>
+        <br>
+        <div class="inline-block" [hidden]="isNotValidVectorSize()">
+          <div [class.vector]="true">
+            Constant terms
+            <matrix-view [rows]="rows" [columns]="1" #constantView></matrix-view>
+          </div>  
+          <div [class.vector]="true">
+            Start Vector
+            <matrix-view [rows]="rows" [columns]="1" #vectorView></matrix-view>
+          </div>  
+        </div>
 
-              <matrix-view [rows]="rows" [columns]="columns" #matrixView></matrix-view>
-          </div>
-          <br>
-
-          <div [class.centered-child]="true" [hidden]="isNotValidVectorSize()">
-              <br>
-              Constant terms
-              <matrix-view [rows]="rows" [columns]="1" #constantView ></matrix-view>
-              <br>
-              Start Vector
-              <matrix-view [rows]="rows" [columns]="1" #vectorView ></matrix-view>
-          </div>
-          <br>
-
+      <div class="calcButtonDiv">
+        <button class="calcButton" 
+          (click)="onClick(matrixView.matrix, constantView.matrix, vectorView.matrix)">
+            Calc  
+        </button>
       </div>
 
-      <h1>
-        <span>
-          <button (click)="onClick(matrixView.matrix, constantView.matrix, vectorView.matrix)">Calc</button>
-        </span>
-      </h1>
       
       <div 
         [class.centered-child]="true"
@@ -83,7 +73,7 @@ export class JacobiMethodComponent
     columns: number;
 
     Log(title: string, matrix: Matrix, description: string): void
-    {
+    {        
         this.loggingService.log(title, matrix, description);
     }
 
@@ -103,6 +93,7 @@ export class JacobiMethodComponent
 
     onClick(matrix: Matrix, constantV: Matrix, vectorX: Matrix): void
     {
+      console.debug("Arrivo qua");
       this.algorithm(matrix, constantV, vectorX, 3);
     }
 
